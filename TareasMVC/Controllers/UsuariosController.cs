@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Server.IIS.Core;
@@ -32,7 +33,7 @@ namespace TareasMVC.Controllers
                 return View(modelo);   
             }
 
-            var usuario = new IdentityUser() { Email = modelo.Email, UserName = modelo.Email }; 
+            var usuario = new IdentityUser() { Email = modelo.Email, UserName = modelo.Name }; 
             var resutado = await _userManager.CreateAsync(usuario, password: modelo.Password);
 
             if (resutado.Succeeded)
@@ -52,9 +53,41 @@ namespace TareasMVC.Controllers
         }
 
 
-        public IActionResult Index()
+        [AllowAnonymous]
+        public IActionResult Login()
         {
             return View();
+        }
+
+        [HttpPost]
+        [AllowAnonymous]
+        public async Task<IActionResult>  Login(LoginViewModel modelo)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(modelo);
+            }
+
+            var resultado = await _signInManager.PasswordSignInAsync(modelo.Email,
+                modelo.Password, modelo.Recuerdame, lockoutOnFailure: false);
+
+            if(resultado.Succeeded)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else
+            {
+                ModelState.AddModelError(string.Empty, "Credenciales incorrectas.");
+
+                return View(modelo);
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Logout()
+        {
+            await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
+            return RedirectToAction("Index", "Home");
         }
     }
 }

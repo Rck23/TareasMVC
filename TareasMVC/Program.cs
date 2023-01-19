@@ -36,7 +36,7 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(opciones =>
 //AUTENTICACION BASADA EN COOKIES
 builder.Services.PostConfigure<CookieAuthenticationOptions>(IdentityConstants.ApplicationScheme, opciones =>
 {
-    opciones.LogoutPath = "/usuarios/login";
+    opciones.LoginPath = "/usuarios/login";
     opciones.AccessDeniedPath= "/usuarios/login";
 });
 
