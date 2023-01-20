@@ -22,8 +22,16 @@ builder.Services.AddControllersWithViews(opciones =>
 builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
     opciones.UseSqlServer("name=DefaultConnection"));
 
+
+
+
 //ACTIVAR AUTENTICACION 
-builder.Services.AddAuthentication();
+//AUTENTICACION CON CUENTA DE MICROSOFT
+builder.Services.AddAuthentication().AddMicrosoftAccount(opciones =>
+{
+    opciones.ClientId = builder.Configuration["MicrosoftClientId"];
+    opciones.ClientSecret = builder.Configuration["MicrosoftSecretId"];
+});
 
 //ACTIVAR SERVICIOS DE Identity 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opciones =>

@@ -5,6 +5,12 @@
 }
 
 <h1>Inicio de sesión</h1>
+@if (ViewData.Keys.Contains("mensaje"))
+{
+    <p style="color:red;">
+        @ViewData["mensaje"]
+    </p>
+}
 
 <div class="card">
     <div class="card-body">
@@ -30,6 +36,10 @@
 
             <button class="btn btn-primary">Iniciar sesión</button>
             <a class="btn btn-secondary" asp-action="registro">Crear una nueva cuenta</a>
+
+
+
+            <a class="btn btn-success" asp-route-proveedor="Microsoft" asp-action="LoginExterno">Continuar con Microsoft</a>
         </form>
     </div>
 
