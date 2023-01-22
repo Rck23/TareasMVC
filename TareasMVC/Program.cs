@@ -7,6 +7,10 @@ using TareasMVC;
 
 var builder = WebApplication.CreateBuilder(args);
 
+//CONEXIÓN A BASE DE DATOS
+var BDconnection = builder.Configuration["ConecctionBD"];
+
+
 //AUTORIZAR SOLO USUARIOS REGISTRADOS
 var politicaUsuariosAutenticados = new AuthorizationPolicyBuilder()
     .RequireAuthenticatedUser()
@@ -47,6 +51,8 @@ builder.Services.PostConfigure<CookieAuthenticationOptions>(IdentityConstants.Ap
     opciones.LoginPath = "/usuarios/login";
     opciones.AccessDeniedPath= "/usuarios/login";
 });
+
+
 
 
 var app = builder.Build();
