@@ -1,10 +1,14 @@
 ﻿@model LoginViewModel
+@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer localizer;
 
 @{
-    ViewData["Title"] = "Login";
+    ViewData["Title"] = @localizer["Display.LoginView"];
 }
 
-<h1>Inicio de sesión</h1>
+<h1>@localizer["Display.LoginView"]</h1>
+
+
 @if (ViewData.Keys.Contains("mensaje"))
 {
     <p style="color:red;">
@@ -34,12 +38,13 @@
                 <label class="form-check-label" asp-for="Recuerdame"></label>
             </div>
 
-            <button class="btn btn-primary">Iniciar sesión</button>
-            <a class="btn btn-secondary" asp-action="registro">Crear una nueva cuenta</a>
+            <button class="btn btn-primary">@localizer["btn login"]</button>
 
+            <a class="btn btn-secondary" asp-action="registro">
+                @localizer["btn Crear cuenta"]
+            </a>
 
-
-            <a class="btn btn-success" asp-route-proveedor="Microsoft" asp-action="LoginExterno">Continuar con Microsoft</a>
+            <a class="btn btn-success" asp-route-proveedor="Microsoft" asp-action="LoginExterno">@localizer["btn microsoft"]</a>
         </form>
     </div>
 

@@ -1,0 +1,3 @@
+﻿function mostarError() {
+    alert(mensajeDeError);
+}

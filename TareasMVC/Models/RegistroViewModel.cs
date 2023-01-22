@@ -4,17 +4,19 @@ namespace TareasMVC.Models
 {
     public class RegistroViewModel
     {
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        [Display(Name= "Nombre de usuario")]
+        [Required(ErrorMessage = "Error.Requerido")]
+        [Display(Name= "Display.Usuario")]
         public string Name { get; set; }
 
 
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
-        [EmailAddress(ErrorMessage = "el campo debe ser un correo electrónico valido.")]
+        [Required(ErrorMessage = "Error.Requerido")]
+        [EmailAddress(ErrorMessage = "Error.Email")]
+        [Display(Name = "Display.Email")]
         public string  Email { get; set; }
 
-        [Required(ErrorMessage = "El campo {0} es requerido.")]
+        [Required(ErrorMessage = "Error.Requerido")]
         [DataType(DataType.Password)]
+        [Display(Name = "Display.Contraseña")]
         public string Password { get; set; }
     }
 }

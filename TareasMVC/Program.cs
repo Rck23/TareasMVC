@@ -1,9 +1,13 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Localization;
 using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 using TareasMVC;
+using Microsoft.AspNetCore.Mvc.Razor;
+using TareasMVC.Servicios;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,7 +24,12 @@ var politicaUsuariosAutenticados = new AuthorizationPolicyBuilder()
 builder.Services.AddControllersWithViews(opciones =>
 {
     opciones.Filters.Add(new AuthorizeFilter(politicaUsuariosAutenticados));
-});
+}).AddViewLocalization(LanguageViewLocationExpanderFormat.Suffix)
+    .AddDataAnnotationsLocalization(opciones =>
+    {   //TRADUCIR LAS ANOTACIONES DE DATOS
+        opciones.DataAnnotationLocalizerProvider = (_, factoria) =>
+            factoria.Create(typeof(RecursoCompartido));
+    });
 
 // CONFIGURAR EL DbContext COMO UN SERVICIO 
 builder.Services.AddDbContext<ApplicationDbContext>(opciones =>
@@ -40,7 +49,11 @@ builder.Services.AddAuthentication().AddMicrosoftAccount(opciones =>
 //ACTIVAR SERVICIOS DE Identity 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opciones =>
 {
-    opciones.SignIn.RequireConfirmedAccount= false;
+    // ESTO INGNORA ALGUNAS VALIDACIONES DE CONTRASEÑA QUE SE DEBEN HACER
+    opciones.Password.RequireNonAlphanumeric = false;
+    opciones.Password.RequireLowercase = false;
+    opciones.Password.RequireUppercase = false;
+    opciones.Password.RequireDigit = false;
 
 }).AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -53,9 +66,25 @@ builder.Services.PostConfigure<CookieAuthenticationOptions>(IdentityConstants.Ap
 });
 
 
-
+//LOCALIZACIÓN EN EL PROYECTO (para utilizar varios idiomas)
+builder.Services.AddLocalization(opciones =>
+{
+    //Agregacion de los recursos (en este caso idioma diferente)
+    opciones.ResourcesPath = "Recursos";
+});
 
 var app = builder.Build();
+
+//AGREGAR DISTINTOS IDIOMAS AL PROYECTO
+//LOCALIZAR LAS PETICIONES DEL USUARIO
+app.UseRequestLocalization(opciones =>
+{
+    // PONER IDIOMA POR DEFAULT (indicar)
+    opciones.DefaultRequestCulture = new RequestCulture("es");
+
+    opciones.SupportedUICultures = Constantes.CulturasUISoportadas
+        .Select(cultura => new CultureInfo(cultura.Value)).ToList();
+});
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

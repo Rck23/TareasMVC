@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Localization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Localization;
 using System.Diagnostics;
 using TareasMVC.Models;
 
@@ -7,23 +9,34 @@ namespace TareasMVC.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
+        private readonly IStringLocalizer<HomeController> _localizer;
 
-        public HomeController(ILogger<HomeController> logger)
+        public HomeController(ILogger<HomeController> logger, 
+            IStringLocalizer<HomeController> localizer)
         {
             _logger = logger;
+            _localizer = localizer;
         }
 
         public IActionResult Index()
         {
+            ViewBag.Saludo = _localizer["Hola & Bienvenido"]; 
             return View();
         }
 
-        public IActionResult Privacy()
+        //ACCIÓN CAMBIAR IDIOMA & CREACION DE COOKIE DE IDIOMA
+        public IActionResult CambiarIdioma(string cultura, string urlRetorno)
         {
-            return View();
+            Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,
+                CookieRequestCultureProvider.MakeCookieValue(new RequestCulture(cultura)),
+
+                    new CookieOptions { Expires = DateTimeOffset.UtcNow.AddYears(1)}
+                );
+
+            return LocalRedirect(urlRetorno);
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+       [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

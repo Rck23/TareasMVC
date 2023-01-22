@@ -1,4 +1,7 @@
-﻿<!DOCTYPE html>
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer localizer;
+
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -20,11 +23,11 @@
         </main>
 
         <div style="margin-left:5rem;">
-            <h1>Tareas MVC</h1>
-            <h4>En esta aplicación podrás administrar tus tareas</h4>
+            <h1>@localizer["Display.tituloInicio"]</h1>
+            <h4>@localizer["Display.textoInicio"]</h4>
         </div>
 
-      
+       
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
