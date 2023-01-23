@@ -80,7 +80,7 @@ namespace TareasMVC.Controllers
                 return View(modelo);
             }
 
-            var resultado = await _signInManager.PasswordSignInAsync(modelo.Name,
+            var resultado = await _signInManager.PasswordSignInAsync(modelo.Email,
                 modelo.Password, modelo.Recuerdame, lockoutOnFailure: false);
 
             if (resultado.Succeeded)
