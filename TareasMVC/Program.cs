@@ -11,8 +11,7 @@ using TareasMVC.Servicios;
 
 var builder = WebApplication.CreateBuilder(args);
 
-//CONEXIÓN A BASE DE DATOS
-var BDconnection = builder.Configuration["ConecctionBD"];
+
 
 
 //AUTORIZAR SOLO USUARIOS REGISTRADOS
@@ -49,11 +48,7 @@ builder.Services.AddAuthentication().AddMicrosoftAccount(opciones =>
 //ACTIVAR SERVICIOS DE Identity 
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(opciones =>
 {
-    // ESTO INGNORA ALGUNAS VALIDACIONES DE CONTRASEÑA QUE SE DEBEN HACER
-    opciones.Password.RequireNonAlphanumeric = false;
-    opciones.Password.RequireLowercase = false;
-    opciones.Password.RequireUppercase = false;
-    opciones.Password.RequireDigit = false;
+    opciones.SignIn.RequireConfirmedAccount = false;
 
 }).AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -72,6 +67,10 @@ builder.Services.AddLocalization(opciones =>
     //Agregacion de los recursos (en este caso idioma diferente)
     opciones.ResourcesPath = "Recursos";
 });
+
+
+//CONFIGURAR EL SERVICIO DE USUARIOS
+builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
 
 var app = builder.Build();
 

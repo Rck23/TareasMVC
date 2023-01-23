@@ -4,6 +4,11 @@ namespace TareasMVC.Models
 {
     public class LoginViewModel
     {
+
+        [Required(ErrorMessage = "Error.Requerido")]
+        [Display(Name = "Display.Usuario")]
+        public string Name { get; set; }
+
         [Required(ErrorMessage = "Error.Requerido")]
         [EmailAddress(ErrorMessage = "Error.Email")]
         [Display(Name = "Display.Email")]

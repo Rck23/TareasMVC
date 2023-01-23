@@ -30,6 +30,7 @@ namespace TareasMVC.Controllers
         {
             return View();
         }
+
         [HttpPost]
         [AllowAnonymous]
         public async Task<IActionResult> Registro(RegistroViewModel modelo)
@@ -40,16 +41,17 @@ namespace TareasMVC.Controllers
             }
 
             var usuario = new IdentityUser() { Email = modelo.Email, UserName = modelo.Name };
-            var resutado = await _userManager.CreateAsync(usuario, password: modelo.Password);
 
-            if (resutado.Succeeded)
+            var resultado = await _userManager.CreateAsync(usuario, password: modelo.Password);
+
+            if (resultado.Succeeded)
             {
                 await _signInManager.SignInAsync(usuario, isPersistent: true);
                 return RedirectToAction("Index", "Home");
             }
             else
             {
-                foreach (var error in resutado.Errors)
+                foreach (var error in resultado.Errors)
                 {
                     ModelState.AddModelError(string.Empty, error.Description);
                 }
@@ -58,11 +60,10 @@ namespace TareasMVC.Controllers
             }
         }
 
-
         [AllowAnonymous]
         public IActionResult Login(string mensaje = null)
         {
-            if(mensaje is not null)
+            if (mensaje is not null)
             {
                 ViewData["mensaje"] = mensaje;
             }
@@ -79,7 +80,7 @@ namespace TareasMVC.Controllers
                 return View(modelo);
             }
 
-            var resultado = await _signInManager.PasswordSignInAsync(modelo.Email,
+            var resultado = await _signInManager.PasswordSignInAsync(modelo.Name,
                 modelo.Password, modelo.Recuerdame, lockoutOnFailure: false);
 
             if (resultado.Succeeded)
@@ -88,10 +89,10 @@ namespace TareasMVC.Controllers
             }
             else
             {
-                ModelState.AddModelError(string.Empty, "Credenciales incorrectas.");
-
+                ModelState.AddModelError(string.Empty, "Nombre de usuario o password incorrecto.");
                 return View(modelo);
             }
+
         }
 
         [HttpPost]
@@ -100,7 +101,6 @@ namespace TareasMVC.Controllers
             await HttpContext.SignOutAsync(IdentityConstants.ApplicationScheme);
             return RedirectToAction("Index", "Home");
         }
-
 
         //CREACIÓN DE LOGIN CON SERVICIOS EXTERNOS
         [AllowAnonymous]
@@ -200,7 +200,7 @@ namespace TareasMVC.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Constantes.RolAdmin)] //AUTORIZACION DE ADMIN PARA HACER NUEVOS ADMINISTRADORES
+       // [Authorize(Roles = Constantes.RolAdmin)] //AUTORIZACION DE ADMIN PARA HACER NUEVOS ADMINISTRADORES
         public async Task<IActionResult> HacerAdmin(string email)
         {
             var usuario = await _context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
@@ -217,7 +217,7 @@ namespace TareasMVC.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = Constantes.RolAdmin)] //AUTORIZACION DE ADMIN PARA REMOVER PRIVILEGIOS DE ADMINISTRADOR
+       // [Authorize(Roles = Constantes.RolAdmin)] //AUTORIZACION DE ADMIN PARA REMOVER PRIVILEGIOS DE ADMINISTRADOR
         public async Task<IActionResult> RemoverAdmin(string email)
         {
             var usuario = await _context.Users.Where(u => u.Email == email).FirstOrDefaultAsync();
