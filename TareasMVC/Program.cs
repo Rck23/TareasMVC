@@ -72,6 +72,10 @@ builder.Services.AddLocalization(opciones =>
 //CONFIGURAR EL SERVICIO DE USUARIOS
 builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
 
+//CONFIGURAR EL SERVICIO DE AUTOMAPPER
+builder.Services.AddAutoMapper(typeof(Program));
+
+
 var app = builder.Build();
 
 //AGREGAR DISTINTOS IDIOMAS AL PROYECTO
