@@ -10,7 +10,7 @@ using TareasMVC.Servicios;
 
 namespace TareasMVC.Controllers
 {
-    [ApiController]
+   
     [Route("api/[controller]")]
     public class TareasController : ControllerBase
     {
@@ -54,7 +54,8 @@ namespace TareasMVC.Controllers
             return tarea;
         }
 
-        [HttpPost("post")]
+        [HttpPost]
+        [Route("post")]
         public async Task<ActionResult<Tarea>> Post([FromBody] string titulo)
         {
             var usuarioId = _servicioUsuarios.ObtenerUsuarioId();

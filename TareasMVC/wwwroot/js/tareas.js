@@ -6,16 +6,17 @@
 }
 
 async function manejarFocusoutTituloTarea(tarea) {
-    const titulo = tarea.titulo();
+    var titulo = tarea.titulo();
     if (!titulo) {
         tareaListadoViewModel.tareas.pop();
         return;
     }
 
-    const data = JSON.stringify(titulo);
-    const respuesta = await fetch(`${urlTareas}/post`, {
+    let data = JSON.stringify(titulo);
+   
+    let respuesta = await fetch(`${urlTareas}/post`, {
         method: 'POST',
-        body: data,
+        data: data,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -26,7 +27,24 @@ async function manejarFocusoutTituloTarea(tarea) {
         tarea.id(json.id);
     } else {
         manejarErrorApi(respuesta);
+        return;
     }
+
+    /*$.ajax({
+        method: 'POST',
+        url: `${urlTareas}/post`,
+        contentType: "application/json; charset=utf-8",
+        dataType: "html",
+        data: titulo
+    })
+        .done(response => {
+            Alert(response.msg, 'success', reloadPage)
+            return true;
+        })
+        .fail(response => {
+            console.log(response); 
+            return false;
+        })*/
 }
 
 async function obtenerTareas() {

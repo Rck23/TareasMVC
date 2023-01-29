@@ -20,7 +20,7 @@ namespace TareasMVC.Entidades
 
 
         //LLAVE FORANEA PARA MOSTRAR TAREAS POR USUARIO
-        public string UsuarioCreacionId { get; set; }
+        public string? UsuarioCreacionId { get; set; }
         public IdentityUser UsuarioCreacion { get; set; }
 
 
