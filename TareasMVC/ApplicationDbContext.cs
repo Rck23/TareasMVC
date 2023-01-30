@@ -15,6 +15,9 @@ namespace TareasMVC
             base.OnModelCreating(modelBuilder);
 
             //modelBuilder.Entity<Tarea>().Property(t => t.Titulo).HasMaxLength(250).IsRequired();
+            modelBuilder.Entity<Tarea>().Property(t => t.Descripcion).HasMaxLength(250).IsRequired(false);
+
+
         }
 
         // CONFIGURACION DE LA CLASE TAREAS PARA CONVERTIRLA EN UNA ENTIDAD

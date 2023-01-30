@@ -43,7 +43,9 @@ namespace TareasMVC.Controllers
         {
             var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
             
-            var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
+            var tarea = await _context.Tareas
+                .Include(t => t.Pasos.OrderBy(p => p.Orden)) // ESTO CARGA LOS PASOS DE LA TAREA
+                .FirstOrDefaultAsync(t => t.Id == id &&
                 t.UsuarioCreacionId == usuarioId);
 
             if(tarea is null)
@@ -55,7 +57,7 @@ namespace TareasMVC.Controllers
         }
 
         [HttpPost]
-        [Route("post")]
+        [Route("Post")]
         public async Task<ActionResult<Tarea>> Post([FromBody] string titulo)
         {
             var usuarioId = _servicioUsuarios.ObtenerUsuarioId();

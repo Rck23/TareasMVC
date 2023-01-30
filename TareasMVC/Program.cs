@@ -8,6 +8,7 @@ using System.Globalization;
 using TareasMVC;
 using Microsoft.AspNetCore.Mvc.Razor;
 using TareasMVC.Servicios;
+using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -28,6 +29,10 @@ builder.Services.AddControllersWithViews(opciones =>
     {   //TRADUCIR LAS ANOTACIONES DE DATOS
         opciones.DataAnnotationLocalizerProvider = (_, factoria) =>
             factoria.Create(typeof(RecursoCompartido));
+    }).AddJsonOptions(opciones =>
+    {
+        //ARREGLA EL ERROR DEL CICLO DE OBJETOS
+        opciones.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
     });
 
 // CONFIGURAR EL DbContext COMO UN SERVICIO 

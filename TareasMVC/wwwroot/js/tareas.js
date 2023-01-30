@@ -6,17 +6,17 @@
 }
 
 async function manejarFocusoutTituloTarea(tarea) {
-    var titulo = tarea.titulo();
+
+    const titulo = tarea.titulo();
     if (!titulo) {
         tareaListadoViewModel.tareas.pop();
         return;
     }
 
-    let data = JSON.stringify(titulo);
-   
-    let respuesta = await fetch(`${urlTareas}/post`, {
+    const data = JSON.stringify(titulo);
+    const respuesta = await fetch("/api/Tareas/Post", {
         method: 'POST',
-        data: data,
+        body: data,
         headers: {
             'Content-Type': 'application/json'
         }
@@ -27,7 +27,6 @@ async function manejarFocusoutTituloTarea(tarea) {
         tarea.id(json.id);
     } else {
         manejarErrorApi(respuesta);
-        return;
     }
 
     /*$.ajax({
@@ -129,6 +128,15 @@ async function manejarClickTarea(tarea) {
     tareaEditarVM.titulo(json.titulo);
     tareaEditarVM.descripcion(json.descripcion);
 
+    // INCLUIR LOS PASOS DE UNA TAREA
+    tareaEditarVM.pasos([]);
+    json.pasos.forEach(paso => {
+        tareaEditarVM.pasos.push(
+            new pasoViewModel({...paso, modoEdicion: false})
+            )
+    })
+
+
     modalEditarTareaBootstrap.show();
 }
 
@@ -177,7 +185,7 @@ function intentarBorrarTarea(tarea) {
         callBackCancelar: () => {
             modalEditarTareaBootstrap.show();
         },
-        titulo: `¿Desea borrar la tarea ${tarea.titulo}?`
+        titulo: `¿Desea borrar la tarea ${tarea.titulo()}?`
     })
 }
 
@@ -199,6 +207,11 @@ async function borrarTarea(tarea) {
 
 function obtenerIndiceTareaEnEdicion() {
     return tareaListadoViewModel.tareas().findIndex(t => t.id() == tareaEditarVM.id);
+}
+
+function obtenerTareaEnEdicion() {
+    const indice = obtenerIndiceTareaEnEdicion();
+    return tareaListadoViewModel.tareas()[indice]; 
 }
 
 $(function () {

@@ -28,8 +28,9 @@ function confirmarAccion({ callBackAceptar, callBackCancelar, titulo }) {
         title: titulo || '¿Realmente deseas hacer esto?',
         showCancelButton: true, 
         confirmButtonColor: '#3085d',
-        cancelButtonColor: 'd33',
+        cancelButtonColor: '#d33',
         confirmButtonText: 'Sí',
+        cancelButtonText: 'Cancelar',
         focusConfirm: true
     }).then((resultado) => {
         if (resultado.isConfirmed) {
