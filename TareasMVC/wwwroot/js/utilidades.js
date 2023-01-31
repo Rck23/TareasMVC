@@ -41,3 +41,14 @@ function confirmarAccion({ callBackAceptar, callBackCancelar, titulo }) {
         }
     });
 }
+
+function descargarArchivo(url, nombre) {
+    var link = document.createElement('a'); 
+    link.href = url;
+    link.download = nombre; 
+    link.target = "_blank";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link); 
+    delete link;
+}

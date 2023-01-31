@@ -10,7 +10,7 @@ using TareasMVC.Servicios;
 
 namespace TareasMVC.Controllers
 {
-   
+
     [Route("api/[controller]")]
     public class TareasController : ControllerBase
     {
@@ -30,7 +30,7 @@ namespace TareasMVC.Controllers
         public async Task<ActionResult<List<TareaDTO>>> Get()
         {
             var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
-            var tareas = await  _context.Tareas
+            var tareas = await _context.Tareas
                 .Where(t => t.UsuarioCreacionId == usuarioId).OrderBy(t => t.Orden)
                 .ProjectTo<TareaDTO>(_mapper.ConfigurationProvider) // UTILIZA LA CONFIGURACIÓN DE AUTO MAPPER PARA REALIZAR EL SELECT
                 .ToListAsync();
@@ -42,13 +42,14 @@ namespace TareasMVC.Controllers
         public async Task<ActionResult<Tarea>> Get(int id)
         {
             var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
-            
+
             var tarea = await _context.Tareas
                 .Include(t => t.Pasos.OrderBy(p => p.Orden)) // ESTO CARGA LOS PASOS DE LA TAREA
+                .Include(t => t.ArchivosAdjuntos.OrderBy(a => a.Orden)) // INCLUYE LOS ARCHIVOS ADJUNTOS DE LA TAREA
                 .FirstOrDefaultAsync(t => t.Id == id &&
                 t.UsuarioCreacionId == usuarioId);
 
-            if(tarea is null)
+            if (tarea is null)
             {
                 return NotFound();
             }
@@ -108,7 +109,7 @@ namespace TareasMVC.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
-            
+
             var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
                 t.UsuarioCreacionId == usuarioId);
 
@@ -146,7 +147,7 @@ namespace TareasMVC.Controllers
             {
                 var id = ids[i];
                 var tarea = tareasDiccionario[id];
-                tarea.Orden = i + 1; 
+                tarea.Orden = i + 1;
 
 
             }

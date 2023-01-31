@@ -80,6 +80,9 @@ builder.Services.AddTransient<IServicioUsuarios, ServicioUsuarios>();
 //CONFIGURAR EL SERVICIO DE AUTOMAPPER
 builder.Services.AddAutoMapper(typeof(Program));
 
+//CONFIGURAR EL SERVICIO DE ALMACENAMIENTO DE ARCHIVOS
+builder.Services.AddTransient<IAlmacenadorArchivos, AlmacenadorArchivosLocal>();
+
 
 var app = builder.Build();
 
