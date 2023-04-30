@@ -1,54 +1,51 @@
 ﻿async function manejarErrorApi(respuesta) {
-    let mensajeError = ''; 
+    let mensajeError = '';
 
     if (respuesta.status === 400) {
         mensajeError = await respuesta.text();
     } else if (respuesta.status === 404) {
         mensajeError = recursoNoEncontrado;
     } else {
-        mensajeError = errorInesperado
+        mensajeError = errorInesperado;
     }
 
     mostrarMensajeError(mensajeError);
 }
 
 function mostrarMensajeError(mensaje) {
-    swal.fire({
+    Swal.fire({
         icon: 'error',
         title: 'Error...',
         text: mensaje
     });
 }
 
-
-//Un callBack es una función que yo le paso a otra función en un contexto determinado
-function confirmarAccion({ callBackAceptar, callBackCancelar, titulo }) {
-    swal.fire({
-        icon: 'warning',
+function confirmarAccion({ callbackAceptar, callbackCancelar, titulo }) {
+    Swal.fire({
         title: titulo || '¿Realmente deseas hacer esto?',
-        showCancelButton: true, 
-        confirmButtonColor: '#3085d',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
         cancelButtonColor: '#d33',
         confirmButtonText: 'Sí',
-        cancelButtonText: 'Cancelar',
         focusConfirm: true
     }).then((resultado) => {
         if (resultado.isConfirmed) {
-            callBackAceptar();
-        } else if (callBackCancelar) {
-            // EL USUARIO HA PRESIONADO EL BOTÓN DE CANCELAR
-            callBackCancelar();
+            callbackAceptar();
+        } else if (callbackCancelar) {
+            // El usuario ha presionado el botón de cancelar
+            callbackCancelar();
         }
-    });
+    })
 }
 
 function descargarArchivo(url, nombre) {
-    var link = document.createElement('a'); 
-    link.href = url;
-    link.download = nombre; 
+    var link = document.createElement('a');
+    link.download = nombre;
     link.target = "_blank";
+    link.href = url;
     document.body.appendChild(link);
     link.click();
-    document.body.removeChild(link); 
+    document.body.removeChild(link);
     delete link;
 }

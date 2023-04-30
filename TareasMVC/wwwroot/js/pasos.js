@@ -7,7 +7,6 @@
     }
 
     tareaEditarVM.pasos.push(new pasoViewModel({ modoEdicion: true, realizado: false }));
-
     $("[name=txtPasoDescripcion]:visible").focus();
 }
 
@@ -22,7 +21,6 @@ function manejarClickCancelarPaso(paso) {
 
 async function manejarClickSalvarPaso(paso) {
     paso.modoEdicion(false);
-
     const esNuevo = paso.esNuevo();
     const idTarea = tareaEditarVM.id;
     const data = obtenerCuerpoPeticionPaso(paso);
@@ -37,6 +35,7 @@ async function manejarClickSalvarPaso(paso) {
         }
         return;
     }
+
     if (esNuevo) {
         await insertarPaso(paso, data, idTarea);
     } else {
@@ -46,8 +45,8 @@ async function manejarClickSalvarPaso(paso) {
 
 async function insertarPaso(paso, data, idTarea) {
     const respuesta = await fetch(`${urlPasos}/${idTarea}`, {
-        method: 'POST',
         body: data,
+        method: "POST",
         headers: {
             'Content-Type': 'application/json'
         }
@@ -61,9 +60,10 @@ async function insertarPaso(paso, data, idTarea) {
 
         tarea.pasosTotal(tarea.pasosTotal() + 1);
 
-        if (paso.realizado) {
+        if (paso.realizado()) {
             tarea.pasosRealizados(tarea.pasosRealizados() + 1);
         }
+
     } else {
         manejarErrorApi(respuesta);
     }
@@ -77,7 +77,6 @@ function obtenerCuerpoPeticionPaso(paso) {
 }
 
 function manejarClickDescripcionPaso(paso) {
-
     paso.modoEdicion(true);
     paso.descripcionAnterior = paso.descripcion();
     $("[name=txtPasoDescripcion]:visible").focus();
@@ -121,16 +120,14 @@ function manejarClickCheckboxPaso(paso) {
     return true;
 }
 
-
 function manejarClickBorrarPaso(paso) {
     modalEditarTareaBootstrap.hide();
-
     confirmarAccion({
-        callBackAceptar: () => {
+        callbackAceptar: () => {
             borrarPaso(paso);
             modalEditarTareaBootstrap.show();
         },
-        callBackCancelar: () => {
+        callbackCancelar: () => {
             modalEditarTareaBootstrap.show();
         },
         titulo: `¿Desea borrar este paso?`
@@ -138,9 +135,8 @@ function manejarClickBorrarPaso(paso) {
 }
 
 async function borrarPaso(paso) {
-
     const respuesta = await fetch(`${urlPasos}/${paso.id()}`, {
-        method: 'DELETE',
+        method: 'DELETE'
     });
 
     if (!respuesta.ok) {
@@ -148,9 +144,7 @@ async function borrarPaso(paso) {
         return;
     }
 
-    tareaEditarVM.pasos.remove(function (item) {
-        return item.id() == paso.id()
-    })
+    tareaEditarVM.pasos.remove(function (item) { return item.id() == paso.id() });
 
     const tarea = obtenerTareaEnEdicion();
     tarea.pasosTotal(tarea.pasosTotal() - 1);

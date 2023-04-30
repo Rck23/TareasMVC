@@ -14,7 +14,8 @@
 
 <div id="contenedor-listado-tareas" class="text-center">
     <div id="reordenable" class="text-start" data-bind="foreach: tareas">
-        <div name="tarea" class="border mb-2 p-2" style="cursor: pointer" data-bind="click: manejarClickTarea">
+        <div name="tarea" class="border mb-2 p-2" style="cursor: pointer"
+             data-bind="click: manejarClickTarea">
             <div data-bind="text: titulo, hidden: esNuevo" class="fw-bold">
             </div>
 
@@ -23,20 +24,20 @@
                 </span>/<span data-bind="text: pasosTotal">
                 </span>
                 <span data-bind="text: porcentajeCompletado">
+
                 </span>
             </div>
 
             <input type="text" name="titulo-tarea" autocomplete="off"
                    data-bind="value: titulo, visible: esNuevo,
-                                attr: {'data-id': id},
-                              event: {focusout: manejarFocusoutTituloTarea}" />
-
+                    attr: {'data-id': id},
+                    event: {focusout: manejarFocusoutTituloTarea}" />
 
         </div>
     </div>
 
     <div data-bind="visible: cargando" class="spinner-border">
-        <span class="visually-hidden"></span>
+        <span class="visually-hidden">Cargando...</span>
     </div>
 
     <div data-bind="visible: noHayTareas">
@@ -49,16 +50,16 @@
 
 @section Scripts{
 
-
-    <script src="~/js/tareas.js" asp-append-version="true"></script>
     <script src="~/js/utilidades.js" asp-append-version="true"></script>
+    <script src="~/js/tareas.js" asp-append-version="true"></script>
     <script src="~/js/pasos.js" asp-append-version="true"></script>
     <script src="~/js/archivos-adjuntos.js" asp-append-version="true"></script>
 
     <script>
-        const urlTareas = "/api/Tareas";
-        const urlPasos = "/api/Pasos";
-        const urlArchivos = "/api/Archivos";
+
+        const urlTareas = "/api/tareas";
+        const urlPasos = "/api/pasos";
+        const urlArchivos = '/api/archivos';
 
         const modalEditarTarea = document.getElementById('modal-editar-tarea');
         const modalEditarTareaBootstrap = new bootstrap.Modal(modalEditarTarea);
@@ -67,25 +68,23 @@
             var self = this;
             self.tareas = ko.observableArray([]);
             self.cargando = ko.observable(true);
+
             self.noHayTareas = ko.pureComputed(function () {
                 if (self.cargando()) {
                     return false;
                 }
+
                 return self.tareas().length === 0;
             })
         }
 
         function tareaElementoListadoViewModel({ id, titulo, pasosTotal, pasosRealizados }) {
-
             var self = this;
             self.id = ko.observable(id);
             self.titulo = ko.observable(titulo);
 
-
-            // AGREGAR OBSERVABLE DE PASOS (es observable para que se actualize)
             self.pasosTotal = ko.observable(pasosTotal);
             self.pasosRealizados = ko.observable(pasosRealizados);
-
 
             self.esNuevo = ko.pureComputed(function () {
                 return self.id() == 0;
@@ -94,8 +93,8 @@
             self.porcentajeCompletado = ko.pureComputed(function () {
                 const calculo = Math.round(self.pasosRealizados() * 1.0 / self.pasosTotal() * 100);
 
-                return `(Completado: ${calculo}%)`;
-            })
+                return `(${calculo}%)`;
+            });
         }
 
         const tareaEditarVM = {
@@ -109,7 +108,6 @@
         const tareaListadoViewModel = new tareaListadoViewModelFn();
 
         function pasoViewModel({ id, descripcion, realizado, modoEdicion }) {
-
             var self = this;
             self.id = ko.observable(id || 0);
             self.descripcion = ko.observable(descripcion || '');
@@ -136,7 +134,5 @@
 
         ko.applyBindings(tareaListadoViewModel, document.getElementById('contenedor-listado-tareas'));
         ko.applyBindings(tareaEditarVM, document.getElementById('modal-editar-tarea'));
-
     </script>
 }
-

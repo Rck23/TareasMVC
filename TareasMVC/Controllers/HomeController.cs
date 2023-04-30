@@ -25,6 +25,7 @@ namespace TareasMVC.Controllers
         }
 
         //ACCIÓN CAMBIAR IDIOMA & CREACION DE COOKIE DE IDIOMA
+        [HttpPost]
         public IActionResult CambiarIdioma(string cultura, string urlRetorno)
         {
             Response.Cookies.Append(CookieRequestCultureProvider.DefaultCookieName,

@@ -4,23 +4,25 @@ namespace TareasMVC.Servicios
 {
     public class AlmacenadorArchivosLocal : IAlmacenadorArchivos
     {
-        private readonly IWebHostEnvironment _env;
-        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IWebHostEnvironment env;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
         public AlmacenadorArchivosLocal(IWebHostEnvironment env,
             IHttpContextAccessor httpContextAccessor)
         {
-            _env = env;
-            _httpContextAccessor = httpContextAccessor;
+            this.env = env;
+            this.httpContextAccessor = httpContextAccessor;
         }
-        public async Task<AlmacenarArchivoResultado[]> Almacenar(string contenedor, IEnumerable<IFormFile> archivos)
+
+        public async Task<AlmacenarArchivoResultado[]> Almacenar(string contenedor,
+            IEnumerable<IFormFile> archivos)
         {
             var tareas = archivos.Select(async archivo =>
             {
                 var nombreArchivoOriginal = Path.GetFileName(archivo.FileName);
                 var extension = Path.GetExtension(archivo.FileName);
                 var nombreArchivo = $"{Guid.NewGuid()}{extension}";
-                string folder = Path.Combine(_env.WebRootPath, contenedor);
+                string folder = Path.Combine(env.WebRootPath, contenedor);
 
                 if (!Directory.Exists(folder))
                 {
@@ -28,26 +30,27 @@ namespace TareasMVC.Servicios
                 }
 
                 string ruta = Path.Combine(folder, nombreArchivo);
-                using(var ms = new MemoryStream())
+                using (var ms = new MemoryStream())
                 {
                     await archivo.CopyToAsync(ms);
                     var contenido = ms.ToArray();
                     await File.WriteAllBytesAsync(ruta, contenido);
                 }
 
-                var url = $"{_httpContextAccessor.HttpContext.Request.Scheme}://{_httpContextAccessor.HttpContext.Request.Host}";
+                var url = $"{httpContextAccessor.HttpContext.Request.Scheme}://{httpContextAccessor.HttpContext.Request.Host}";
                 var urlArchivo = Path.Combine(url, contenedor, nombreArchivo).Replace("\\", "/");
 
                 return new AlmacenarArchivoResultado
                 {
-                    Titulo = nombreArchivoOriginal,
-                    URL = urlArchivo
+                    URL = urlArchivo,
+                    Titulo = nombreArchivoOriginal
                 };
+
             });
 
-            var resultados = await Task.WhenAll(tareas); 
-
+            var resultados = await Task.WhenAll(tareas);
             return resultados;
+
         }
 
         public Task Borrar(string ruta, string contenedor)
@@ -58,7 +61,8 @@ namespace TareasMVC.Servicios
             }
 
             var nombreArchivo = Path.GetFileName(ruta);
-            var directorioArchivo = Path.Combine(_env.WebRootPath, contenedor, nombreArchivo);
+
+            var directorioArchivo = Path.Combine(env.WebRootPath, contenedor, nombreArchivo);
 
             if (File.Exists(directorioArchivo))
             {

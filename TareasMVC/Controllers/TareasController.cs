@@ -11,28 +11,30 @@ using TareasMVC.Servicios;
 namespace TareasMVC.Controllers
 {
 
-    [Route("api/[controller]")]
+    [Route("api/tareas")]
     public class TareasController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IServicioUsuarios _servicioUsuarios;
-        private readonly IMapper _mapper;
+        private readonly ApplicationDbContext context;
+        private readonly IServicioUsuarios servicioUsuarios;
+        private readonly IMapper mapper;
 
         public TareasController(ApplicationDbContext context,
-            IServicioUsuarios servicioUsuarios, IMapper mapper)
+            IServicioUsuarios servicioUsuarios,
+            IMapper mapper)
         {
-            _context = context;
-            _servicioUsuarios = servicioUsuarios;
-            _mapper = mapper;
+            this.context = context;
+            this.servicioUsuarios = servicioUsuarios;
+            this.mapper = mapper;
         }
 
         [HttpGet]
         public async Task<ActionResult<List<TareaDTO>>> Get()
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
-            var tareas = await _context.Tareas
-                .Where(t => t.UsuarioCreacionId == usuarioId).OrderBy(t => t.Orden)
-                .ProjectTo<TareaDTO>(_mapper.ConfigurationProvider) // UTILIZA LA CONFIGURACIÓN DE AUTO MAPPER PARA REALIZAR EL SELECT
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+            var tareas = await context.Tareas
+                .Where(t => t.UsuarioCreacionId == usuarioId)
+                .OrderBy(t => t.Orden)
+                .ProjectTo<TareaDTO>(mapper.ConfigurationProvider)
                 .ToListAsync();
 
             return tareas;
@@ -41,13 +43,13 @@ namespace TareasMVC.Controllers
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Tarea>> Get(int id)
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-            var tarea = await _context.Tareas
-                .Include(t => t.Pasos.OrderBy(p => p.Orden)) // ESTO CARGA LOS PASOS DE LA TAREA
-                .Include(t => t.ArchivosAdjuntos.OrderBy(a => a.Orden)) // INCLUYE LOS ARCHIVOS ADJUNTOS DE LA TAREA
+            var tarea = await context.Tareas
+                .Include(t => t.Pasos.OrderBy(p => p.Orden))
+                .Include(t => t.ArchivosAdjuntos.OrderBy(a => a.Orden))
                 .FirstOrDefaultAsync(t => t.Id == id &&
-                t.UsuarioCreacionId == usuarioId);
+            t.UsuarioCreacionId == usuarioId);
 
             if (tarea is null)
             {
@@ -55,20 +57,20 @@ namespace TareasMVC.Controllers
             }
 
             return tarea;
+
         }
 
         [HttpPost]
-        [Route("Post")]
         public async Task<ActionResult<Tarea>> Post([FromBody] string titulo)
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-            var existenTareas = await _context.Tareas.AnyAsync(t => t.UsuarioCreacionId == usuarioId);
+            var existenTareas = await context.Tareas.AnyAsync(t => t.UsuarioCreacionId == usuarioId);
 
             var ordenMayor = 0;
             if (existenTareas)
             {
-                ordenMayor = await _context.Tareas.Where(t => t.UsuarioCreacionId == usuarioId)
+                ordenMayor = await context.Tareas.Where(t => t.UsuarioCreacionId == usuarioId)
                     .Select(t => t.Orden).MaxAsync();
             }
 
@@ -80,8 +82,8 @@ namespace TareasMVC.Controllers
                 Orden = ordenMayor + 1
             };
 
-            _context.Add(tarea);
-            await _context.SaveChangesAsync();
+            context.Add(tarea);
+            await context.SaveChangesAsync();
 
             return tarea;
         }
@@ -89,9 +91,10 @@ namespace TareasMVC.Controllers
         [HttpPut("{id:int}")]
         public async Task<IActionResult> EditarTarea(int id, [FromBody] TareaEditarDTO tareaEditarDTO)
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
-            var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
-                    t.UsuarioCreacionId == usuarioId);
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+
+            var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
+            t.UsuarioCreacionId == usuarioId);
 
             if (tarea is null)
             {
@@ -101,36 +104,37 @@ namespace TareasMVC.Controllers
             tarea.Titulo = tareaEditarDTO.Titulo;
             tarea.Descripcion = tareaEditarDTO.Descripcion;
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+
             return Ok();
         }
 
         [HttpDelete("{id:int}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-            var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
-                t.UsuarioCreacionId == usuarioId);
+            var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == id &&
+            t.UsuarioCreacionId == usuarioId);
 
             if (tarea is null)
             {
                 return NotFound();
             }
 
-            _context.Remove(tarea);
-            await _context.SaveChangesAsync();
-
+            context.Remove(tarea);
+            await context.SaveChangesAsync();
             return Ok();
         }
+
 
         [HttpPost("ordenar")]
         public async Task<IActionResult> Ordenar([FromBody] int[] ids)
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-            var tareas = await _context.Tareas.Where(t => t.UsuarioCreacionId == usuarioId)
-                .ToListAsync();
+            var tareas = await context.Tareas
+                .Where(t => t.UsuarioCreacionId == usuarioId).ToListAsync();
 
             var tareasId = tareas.Select(t => t.Id);
 
@@ -148,11 +152,10 @@ namespace TareasMVC.Controllers
                 var id = ids[i];
                 var tarea = tareasDiccionario[id];
                 tarea.Orden = i + 1;
-
-
             }
 
-            await _context.SaveChangesAsync();
+            await context.SaveChangesAsync();
+
             return Ok();
         }
     }

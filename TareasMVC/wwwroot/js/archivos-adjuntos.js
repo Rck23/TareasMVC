@@ -10,15 +10,13 @@ async function manejarSeleccionArchivoTarea(event) {
 
     const idTarea = tareaEditarVM.id;
     const formData = new FormData();
-
     for (var i = 0; i < archivosArreglo.length; i++) {
         formData.append("archivos", archivosArreglo[i]);
     }
 
     const respuesta = await fetch(`${urlArchivos}/${idTarea}`, {
-        method: 'POST',
-        body: formData
-
+        body: formData,
+        method: 'POST'
     });
 
     if (!respuesta.ok) {
@@ -36,7 +34,7 @@ function prepararArchivosAdjuntos(archivosAdjuntos) {
     archivosAdjuntos.forEach(archivoAdjunto => {
         let fechaCreacion = archivoAdjunto.fechaCreacion;
         if (archivoAdjunto.fechaCreacion.indexOf('Z') === -1) {
-            fechaCreacion += 'Z'; // La Z indica el formato de fecha Utc
+            fechaCreacion += 'Z';
         }
 
         const fechaCreationDT = new Date(fechaCreacion);
@@ -51,7 +49,6 @@ let tituloArchivoAdjuntoAnterior;
 function manejarClickTituloArchivoAdjunto(archivoAdjunto) {
     archivoAdjunto.modoEdicion(true);
     tituloArchivoAdjuntoAnterior = archivoAdjunto.titulo();
-
     $("[name='txtArchivoAdjuntoTitulo']:visible").focus();
 }
 
@@ -79,7 +76,6 @@ async function manejarFocusoutTituloArchivoAdjunto(archivoAdjunto) {
 
     if (!respuesta.ok) {
         manejarErrorApi(respuesta);
-        return;
     }
 }
 
@@ -87,20 +83,20 @@ function manejarClickBorrarArchivoAdjunto(archivoAdjunto) {
     modalEditarTareaBootstrap.hide();
 
     confirmarAccion({
-        callBackAceptar: () => {
+        callbackAceptar: () => {
             borrarArchivoAdjunto(archivoAdjunto);
             modalEditarTareaBootstrap.show();
         },
-        callBackCancelar: () => {
+        callbackCancelar: () => {
             modalEditarTareaBootstrap.show();
         },
-        titulo: `¿Desea borrar este archivo adjunto?`
-    })
+        titulo: '¿Desea borrar este archivo adjunto?'
+    });
 }
 
 async function borrarArchivoAdjunto(archivoAdjunto) {
     const respuesta = await fetch(`${urlArchivos}/${archivoAdjunto.id}`, {
-        method: 'DELETE',
+        method: 'DELETE'
     });
 
     if (!respuesta.ok) {
@@ -108,12 +104,51 @@ async function borrarArchivoAdjunto(archivoAdjunto) {
         return;
     }
 
-    tareaEditarVM.archivosAdjuntos.remove(function (item) {
-        return item.id == archivoAdjunto.id
-    })
+    tareaEditarVM.archivosAdjuntos.remove(function (item) { return item.id == archivoAdjunto.id });
 }
-
 
 function manejarClickDescargarArchivoAdjunto(archivoAdjunto) {
     descargarArchivo(archivoAdjunto.url, archivoAdjunto.titulo());
 }
+
+async function actualizarOrdenArchivos() {
+    const ids = obtenerIdsArchivos();
+    await enviarIdsArchivosAlBackend(ids);
+
+    const arregloOrganizado = tareaEditarVM.archivosAdjuntos.sorted(function (a, b) {
+        return ids.indexOf(a.id.toString()) - ids.indexOf(b.id.toString());
+    })
+
+    tareaEditarVM.archivosAdjuntos(arregloOrganizado);
+}
+
+function obtenerIdsArchivos() {
+    const ids = $("[name=txtArchivoAdjuntoTitulo]").map(function () {
+        return $(this).attr('data-id')
+    }).get();
+    return ids;
+}
+
+async function enviarIdsArchivosAlBackend(ids) {
+    var data = JSON.stringify(ids);
+    const respuesta = await fetch(`${urlArchivos}/ordenar/${tareaEditarVM.id}`, {
+        method: 'POST',
+        body: data,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!respuesta.ok) {
+        manejarErrorApi(respuesta);
+    }
+}
+
+$(function () {
+    $("#reordenable-adjuntos").sortable({
+        axis: 'y',
+        stop: async function () {
+            await actualizarOrdenArchivos();
+        }
+    })
+})

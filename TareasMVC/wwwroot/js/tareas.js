@@ -6,7 +6,6 @@
 }
 
 async function manejarFocusoutTituloTarea(tarea) {
-
     const titulo = tarea.titulo();
     if (!titulo) {
         tareaListadoViewModel.tareas.pop();
@@ -14,7 +13,7 @@ async function manejarFocusoutTituloTarea(tarea) {
     }
 
     const data = JSON.stringify(titulo);
-    const respuesta = await fetch("/api/Tareas/Post", {
+    const respuesta = await fetch(urlTareas, {
         method: 'POST',
         body: data,
         headers: {
@@ -28,22 +27,6 @@ async function manejarFocusoutTituloTarea(tarea) {
     } else {
         manejarErrorApi(respuesta);
     }
-
-    /*$.ajax({
-        method: 'POST',
-        url: `${urlTareas}/post`,
-        contentType: "application/json; charset=utf-8",
-        dataType: "html",
-        data: titulo
-    })
-        .done(response => {
-            Alert(response.msg, 'success', reloadPage)
-            return true;
-        })
-        .fail(response => {
-            console.log(response); 
-            return false;
-        })*/
 }
 
 async function obtenerTareas() {
@@ -54,7 +37,7 @@ async function obtenerTareas() {
         headers: {
             'Content-Type': 'application/json'
         }
-    });
+    })
 
     if (!respuesta.ok) {
         manejarErrorApi(respuesta);
@@ -74,10 +57,9 @@ async function obtenerTareas() {
 
 async function actualizarOrdenTareas() {
     const ids = obtenerIdsTareas();
-
     await enviarIdsTareasAlBackend(ids);
 
-    const arregloOrdenado = tareaElementoListadoViewModel.tareas.sorted(function (a, b) {
+    const arregloOrdenado = tareaListadoViewModel.tareas.sorted(function (a, b) {
         return ids.indexOf(a.id().toString()) - ids.indexOf(b.id().toString());
     });
 
@@ -89,7 +71,6 @@ function obtenerIdsTareas() {
     const ids = $("[name=titulo-tarea]").map(function () {
         return $(this).attr("data-id");
     }).get();
-
     return ids;
 }
 
@@ -99,22 +80,22 @@ async function enviarIdsTareasAlBackend(ids) {
         method: 'POST',
         body: data,
         headers: {
-            'Content-type': 'application/json'
+            'Content-Type': 'application/json'
         }
     });
 }
 
 async function manejarClickTarea(tarea) {
-    if(tarea.esNuevo()){
-        return; 
+    if (tarea.esNuevo()) {
+        return;
     }
 
-    const respuesta = await fetch(`${urlTareas}/${tarea.id()}`,{
+    const respuesta = await fetch(`${urlTareas}/${tarea.id()}`, {
         method: 'GET',
         headers: {
-            'Content-type': 'application/json'
+            'Content-Type': 'application/json'
         }
-    })
+    });
 
     if (!respuesta.ok) {
         manejarErrorApi(respuesta);
@@ -122,23 +103,23 @@ async function manejarClickTarea(tarea) {
     }
 
     const json = await respuesta.json();
-    
 
-    tareaEditarVM.id = json.id; 
+    tareaEditarVM.id = json.id;
     tareaEditarVM.titulo(json.titulo);
     tareaEditarVM.descripcion(json.descripcion);
 
-    // INCLUIR LOS PASOS DE UNA TAREA
     tareaEditarVM.pasos([]);
+
     json.pasos.forEach(paso => {
         tareaEditarVM.pasos.push(
-            new pasoViewModel({...paso, modoEdicion: false})
-            )
+            new pasoViewModel({ ...paso, modoEdicion: false })
+        )
     })
 
-    prepararArchivosAdjuntos(json.archivosAdjuntos); 
+    prepararArchivosAdjuntos(json.archivosAdjuntos);
 
     modalEditarTareaBootstrap.show();
+
 }
 
 async function manejarCambioEditarTarea() {
@@ -154,8 +135,8 @@ async function manejarCambioEditarTarea() {
 
     await editarTareaCompleta(obj);
 
-    const indice = tareaListadoViewModel.tareas().findIndex(t => t.id() === obj.id); 
-    const tarea = tareaListadoViewModel.tareas()[indice]; 
+    const indice = tareaListadoViewModel.tareas().findIndex(t => t.id() === obj.id);
+    const tarea = tareaListadoViewModel.tareas()[indice];
     tarea.titulo(obj.titulo);
 }
 
@@ -166,13 +147,13 @@ async function editarTareaCompleta(tarea) {
         method: 'PUT',
         body: data,
         headers: {
-            'Content-type': 'application/json'
+            'Content-Type': 'application/json'
         }
     });
 
-    if (!respuesta.ok) { //SI LA RESPUESTA FALLA 
+    if (!respuesta.ok) {
         manejarErrorApi(respuesta);
-        throw "error"; //DETIENE CUALQUIER COSA QUE SE ESTE CORRIENDO EN LA APP
+        throw "error";
     }
 }
 
@@ -180,29 +161,30 @@ function intentarBorrarTarea(tarea) {
     modalEditarTareaBootstrap.hide();
 
     confirmarAccion({
-        callBackAceptar: () => {
-            borrarTarea(tarea); 
+        callbackAceptar: () => {
+            borrarTarea(tarea);
         },
-        callBackCancelar: () => {
+        callbackCancelar: () => {
             modalEditarTareaBootstrap.show();
         },
         titulo: `¿Desea borrar la tarea ${tarea.titulo()}?`
     })
+
 }
 
 async function borrarTarea(tarea) {
-    const idTarea = tarea.id; 
+    const idTarea = tarea.id;
 
     const respuesta = await fetch(`${urlTareas}/${idTarea}`, {
         method: 'DELETE',
         headers: {
-            'Content-type': 'application/json'
+            'Content-Type': 'application/json'
         }
     });
 
     if (respuesta.ok) {
         const indice = obtenerIndiceTareaEnEdicion();
-        tareaElementoListadoViewModel.tareas.splice(indice, 1);
+        tareaListadoViewModel.tareas.splice(indice, 1);
     }
 }
 
@@ -212,7 +194,7 @@ function obtenerIndiceTareaEnEdicion() {
 
 function obtenerTareaEnEdicion() {
     const indice = obtenerIndiceTareaEnEdicion();
-    return tareaListadoViewModel.tareas()[indice]; 
+    return tareaListadoViewModel.tareas()[indice];
 }
 
 $(function () {

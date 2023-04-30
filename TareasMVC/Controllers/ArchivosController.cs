@@ -7,52 +7,51 @@ using TareasMVC.Servicios;
 namespace TareasMVC.Controllers
 {
     [Route("api/[controller]")]
-    [ApiController]
     public class ArchivosController : ControllerBase
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IAlmacenadorArchivos _almacenadorArchivos;
-        private readonly IServicioUsuarios _servicioUsuarios;
+        private readonly ApplicationDbContext context;
+        private readonly IAlmacenadorArchivos almacenadorArchivos;
+        private readonly IServicioUsuarios servicioUsuarios;
         private readonly string contenedor = "archivosadjuntos";
 
         public ArchivosController(ApplicationDbContext context,
-            IAlmacenadorArchivos almacenadorArchivos, 
+            IAlmacenadorArchivos almacenadorArchivos,
             IServicioUsuarios servicioUsuarios)
         {
-            _context = context;
-            _almacenadorArchivos = almacenadorArchivos;
-            _servicioUsuarios = servicioUsuarios;
+            this.context = context;
+            this.almacenadorArchivos = almacenadorArchivos;
+            this.servicioUsuarios = servicioUsuarios;
         }
 
         [HttpPost("{tareaId:int}")]
         public async Task<ActionResult<IEnumerable<ArchivoAdjunto>>> Post(int tareaId,
-            [FromForm] IEnumerable<IFormFile> archivos) // FromForm <---- permite transmitir un formato que no nomas sea JSON o campos básicos. 
+            [FromForm] IEnumerable<IFormFile> archivos)
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-            var tarea = await _context.Tareas.FirstOrDefaultAsync(t => t.Id == tareaId); 
+            var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == tareaId);
 
-            if (tarea == null)
+            if (tarea is null)
             {
                 return NotFound();
             }
 
-            if(tarea.UsuarioCreacionId != usuarioId)
+            if (tarea.UsuarioCreacionId != usuarioId)
             {
                 return Forbid();
             }
 
-            var existenArchivosAdjuntos = await _context.ArchivosAdjuntos
-                    .AnyAsync(a => a.TareaId == tareaId);
+            var existenArchivosAdjuntos =
+                    await context.ArchivosAdjuntos.AnyAsync(a => a.TareaId == tareaId);
 
-            var ordenMayor = 0; 
+            var ordenMayor = 0;
             if (existenArchivosAdjuntos)
             {
-                ordenMayor = await _context.ArchivosAdjuntos
+                ordenMayor = await context.ArchivosAdjuntos
                     .Where(a => a.TareaId == tareaId).Select(a => a.Orden).MaxAsync();
             }
 
-            var resultados = await _almacenadorArchivos.Almacenar(contenedor, archivos);
+            var resultados = await almacenadorArchivos.Almacenar(contenedor, archivos);
 
             var archivosAdjuntos = resultados.Select((resultado, indice) => new ArchivoAdjunto
             {
@@ -61,23 +60,22 @@ namespace TareasMVC.Controllers
                 Url = resultado.URL,
                 Titulo = resultado.Titulo,
                 Orden = ordenMayor + indice + 1
-
             }).ToList();
 
-            _context.AddRange(archivosAdjuntos);
-            await _context.SaveChangesAsync();
+            context.AddRange(archivosAdjuntos);
+            await context.SaveChangesAsync();
 
             return archivosAdjuntos.ToList();
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(Guid id, string titulo)
+        public async Task<IActionResult> Put(Guid id, [FromBody] string titulo)
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
-            
-            var archivoAdjunto = await _context.ArchivosAdjuntos.Include(a => a.Tarea)
-                    .FirstOrDefaultAsync(a => a.Id == id);
-            
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
+
+            var archivoAdjunto = await context
+                .ArchivosAdjuntos.Include(a => a.Tarea).FirstOrDefaultAsync(a => a.Id == id);
+
             if (archivoAdjunto is null)
             {
                 return NotFound();
@@ -88,19 +86,18 @@ namespace TareasMVC.Controllers
                 return Forbid();
             }
 
-            archivoAdjunto.Titulo= titulo;
-            await _context.SaveChangesAsync();  
-
+            archivoAdjunto.Titulo = titulo;
+            await context.SaveChangesAsync();
             return Ok();
         }
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> Delete(Guid id)
         {
-            var usuarioId = _servicioUsuarios.ObtenerUsuarioId();
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
-            var archivoAdjunto = await _context.ArchivosAdjuntos.Include(a => a.Tarea)
-                    .FirstOrDefaultAsync(a => a.Id == id);
+            var archivoAdjunto = await context.ArchivosAdjuntos.Include(a => a.Tarea)
+                .FirstOrDefaultAsync(a => a.Id == id);
 
             if (archivoAdjunto is null)
             {
@@ -112,11 +109,47 @@ namespace TareasMVC.Controllers
                 return Forbid();
             }
 
-            _context.Remove(archivoAdjunto); 
-            await _context.SaveChangesAsync();
-            await _almacenadorArchivos.Borrar(archivoAdjunto.Url, contenedor);
+            context.Remove(archivoAdjunto);
+            await context.SaveChangesAsync();
+            await almacenadorArchivos.Borrar(archivoAdjunto.Url, contenedor);
+            return Ok();
+        }
 
+        [HttpPost("ordenar/{tareaId:int}")]
+        public async Task<IActionResult> Ordenar(int tareaId, [FromBody] Guid[] ids)
+        {
+            var usuarioId = servicioUsuarios.ObtenerUsuarioId();
 
+            var tarea = await context.Tareas.FirstOrDefaultAsync(t => t.Id == tareaId &&
+            t.UsuarioCreacionId == usuarioId);
+
+            if (tarea is null)
+            {
+                return NotFound();
+            }
+
+            var archivosAdjuntos = await context.ArchivosAdjuntos
+                .Where(x => x.TareaId == tareaId).ToListAsync();
+
+            var archivosIds = archivosAdjuntos.Select(x => x.Id);
+
+            var idsArchivosNoPertenecenALaTarea = ids.Except(archivosIds).ToList();
+
+            if (idsArchivosNoPertenecenALaTarea.Any())
+            {
+                return BadRequest("No todos los archivos están presentes");
+            }
+
+            var archivosDiccionario = archivosAdjuntos.ToDictionary(p => p.Id);
+
+            for (int i = 0; i < ids.Length; i++)
+            {
+                var archivoId = ids[i];
+                var archivo = archivosDiccionario[archivoId];
+                archivo.Orden = i + 1;
+            }
+
+            await context.SaveChangesAsync();
             return Ok();
         }
     }

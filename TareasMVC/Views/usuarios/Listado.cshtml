@@ -10,9 +10,9 @@
 
 <h1>Listado de usuarios</h1>
 
-@if(Model.Mensaje is not null)
+@if (Model.Mensaje is not null)
 {
-    <div class="alert alert-success" role="alert"> 
+    <div class="alert alert-success" role="alert">
         @Model.Mensaje
     </div>
 }
@@ -36,12 +36,12 @@
                             <button class="btn btn-primary me-2"
                             asp-action="HacerAdmin"
                             asp-route-email="@usuario.Email">
-                                Hacer Administrador
+                                Hacer Admin
                             </button>
                             <button class="btn btn-secondary me-2"
                             asp-action="RemoverAdmin"
                             asp-route-email="@usuario.Email">
-                                Remover Administrador
+                                Remover Admin
                             </button>
                         </td>
                         <td>

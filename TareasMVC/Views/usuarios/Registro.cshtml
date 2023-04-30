@@ -15,13 +15,13 @@
 
             <div class="mb-3">
                 <label asp-for="Name" class="form-label"></label>
-                <input asp-for="Name" class="form-control" />
+                <input asp-for="Name" autocomplete="off" class="form-control" />
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
 
             <div class="mb-3">
                 <label asp-for="Email" class="form-label"></label>
-                <input asp-for="Email" class="form-control" />
+                <input asp-for="Email" autocomplete="off" class="form-control" />
                 <span asp-validation-for="Email" class="text-danger"></span>
             </div>
 
@@ -31,18 +31,17 @@
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
 
-            <button class="btn btn-primary">@localizer["btn Regístrate"]</button>
+            <button class="btn-primary btn">Regístrate</button>
+            <a class="btn btn-success" asp-action="login">Deseo Loguearme</a>
 
-            <a class="btn btn-secondary" asp-action="login">@localizer["btn login"]</a>
-
-            <a class="btn btn-success" asp-route-proveedor="Microsoft" asp-action="LoginExterno">@localizer["btn microsoft"]</a>
+            <a class="btn btn-success" asp-action="LoginExterno" asp-route-proveedor="Microsoft">
+                Continuar con Microsoft
+            </a>
 
         </form>
     </div>
-
 </div>
 
-
-@section Scripts{
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
-    }
+}
