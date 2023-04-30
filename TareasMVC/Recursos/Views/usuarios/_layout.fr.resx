@@ -121,6 +121,6 @@
     <value>Dans cette application, vous serez capable de gérer vos tâches</value>
   </data>
   <data name="Display.tituloInicio" xml:space="preserve">
-    <value>Tâches MVC</value>
+    <value>Devoirs MVC</value>
   </data>
 </root>
