@@ -40,9 +40,18 @@ button.accept-policy {
 }
 
 .footer {
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  white-space: nowrap;
-  line-height: 60px;
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    white-space: nowrap;
+    line-height: 60px;
+ 
+}
+
+@media (min-width: 458px) {
+    .footer {
+        font-size: 15px;
+        text-align:center;
+       
+    }
 }

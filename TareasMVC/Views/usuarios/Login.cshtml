@@ -6,7 +6,7 @@
     ViewData["Title"] = @localizer["Display.LoginView"];
 }
 
-<h1>@localizer["Display.LoginView"]</h1>
+
 
 
 @if (ViewData.Keys.Contains("mensaje"))
@@ -19,6 +19,7 @@
 <div class="card">
     <div class="card-body">
         <form asp-action="Login">
+            <h1 class="text-center">@localizer["Display.LoginView"]</h1>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
             <div class="mb-3">
@@ -38,11 +39,14 @@
                 <label class="form-check-label" asp-for="Recuerdame"></label>
             </div>
 
-            <button class="btn-primary btn">Login</button>
-            <a class="btn btn-success" asp-action="registro">Crear una nueva cuenta</a>
-            <a class="btn btn-success" asp-action="LoginExterno" asp-route-proveedor="Microsoft">
+            <div class="text-center m-2">
+
+                <button class="btn-outline-success  m-2 btn">Iniciar sesión</button>
+                <a class="btn btn-outline-primary  m-2" asp-action="registro">Crear una nueva cuenta</a>
+                <a class="btn btn-outline-info  m-2" asp-action="LoginExterno" asp-route-proveedor="Microsoft">
                 Continuar con Microsoft
-            </a>
+                 </a>
+            </div>
 
         </form>
     </div>
