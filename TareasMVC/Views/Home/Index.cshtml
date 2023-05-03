@@ -8,7 +8,7 @@
 <div class="text-center">
     <h1 class="display-4">@localizer["Mis tareas"]</h1>
     <button type="button" class="btn btn-primary mb-3" onclick="agregarNuevaTareaAlListado()">
-        @localizer["Agregar nueva tarea"]
+        @localizer["AgregarTarea"]
     </button>
 </div>
 
@@ -37,11 +37,12 @@
     </div>
 
     <div data-bind="visible: cargando" class="spinner-border">
-        <span class="visually-hidden">Cargando...</span>
+        <span class="visually-hidden">@localizer["Cargando"]</span>
     </div>
 
     <div data-bind="visible: noHayTareas">
-        No existen tareas para mostrar
+        @localizer["NoExiste"]
+        
     </div>
 
 </div>

@@ -117,22 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="1" xml:space="preserve">
-    <value />
+  <data name="Agregado" xml:space="preserve">
+    <value>Ajouté</value>
   </data>
-  <data name="AgregarTarea" xml:space="preserve">
-    <value>Ajouter une nouvelle tâche</value>
+  <data name="Borrar" xml:space="preserve">
+    <value>Supprimer</value>
   </data>
-  <data name="Cargando" xml:space="preserve">
-    <value>Charger...</value>
+  <data name="Descargar" xml:space="preserve">
+    <value>Décharger</value>
   </data>
-  <data name="Mi presentacion" xml:space="preserve">
-    <value>Je m'appelle Ulises</value>
-  </data>
-  <data name="Mis tareas" xml:space="preserve">
-    <value>Mes devoirs</value>
-  </data>
-  <data name="NoExiste" xml:space="preserve">
-    <value>Aucune devoirs à afficher</value>
+  <data name="Titulo" xml:space="preserve">
+    <value>Pièces jointes</value>
   </data>
 </root>

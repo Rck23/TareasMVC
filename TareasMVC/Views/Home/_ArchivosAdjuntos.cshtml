@@ -1,4 +1,7 @@
-﻿<label><i class="bi bi-paperclip"></i> Archivos adjuntos</label>
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer localizer
+
+<label><i class="bi bi-paperclip"></i> @localizer["Titulo"]</label>
 <button class="btn btn-secondary btn-sm" onclick="manejarClickAgregarArchivoAdjunto()"><i class="bi bi-plus"></i></button>
 <input type="file"
        onchange="manejarSeleccionArchivoTarea(event)"
@@ -15,12 +18,12 @@ hidden: modoEdicion, click: manejarClickTituloArchivoAdjunto"></div>
         </div>
 
         <div>
-            Agregado <span data-bind="text: publicado"></span> -
+            @localizer["Agregado"] <span data-bind="text: publicado"></span> -
             <span class="fw-bold" style="cursor: pointer"
-                  data-bind="click: manejarClickBorrarArchivoAdjunto">Borrar</span> -
+                  data-bind="click: manejarClickBorrarArchivoAdjunto">@localizer["Borrar"]</span> -
             <span class="fw-bold"
                   data-bind="click: manejarClickDescargarArchivoAdjunto"
-                  style="cursor: pointer">Descargar</span>
+                  style="cursor: pointer">@localizer["Descargar"]</span>
         </div>
     </div>
 </div>

@@ -1,4 +1,7 @@
-﻿<div class="modal fade" id="modal-editar-tarea" tabindex="-1">
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer localizer
+
+<div class="modal fade" id="modal-editar-tarea" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -13,10 +16,12 @@
                                    placeholder="titulo"
                                    autocomplete="off"
                                    data-bind="value: titulo, event: {change: manejarCambioEditarTarea}" />
-                            <label for="txtTituloCrearTarea">Título de la tarea</label>
+                            <label for="txtTituloCrearTarea">
+                                @localizer["titulo"]
+                            </label>
                         </div>
                         <div class="mb-3">
-                            <label>Descripción</label>
+                            <label>@localizer["descripcion"]</label>
                             <textarea type="text" class="form-control" rows="4"
                                       data-bind="value: descripcion,
                                         event: {change: manejarCambioEditarTarea}">
@@ -34,7 +39,7 @@
                         <button data-bind="{click: intentarBorrarTarea}"
                                 class="btn btn-secondary mb-2 w-100 text-start">
                             <i class="bi bi-x-lg"></i>
-                            Borrar tarea
+                            @localizer["borrar"]
                         </button>
                     </div>
                 </div>

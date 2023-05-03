@@ -117,7 +117,19 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AgregarTarea" xml:space="preserve">
+    <value>Add a new task</value>
+  </data>
+  <data name="Cargando" xml:space="preserve">
+    <value>Loading...</value>
+  </data>
   <data name="Mi presentacion" xml:space="preserve">
     <value>My name is Ulises</value>
+  </data>
+  <data name="Mis tareas" xml:space="preserve">
+    <value>My tasks</value>
+  </data>
+  <data name="NoExiste" xml:space="preserve">
+    <value>There are no tasks</value>
   </data>
 </root>

@@ -1,4 +1,7 @@
-﻿<label><i class="bi bi-check-square"></i> Pasos de la tarea</label>
+﻿@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer localizer
+
+<label><i class="bi bi-check-square"></i> @localizer["titulo"]</label>
 <button class="btn btn-secondary btn-sm" onclick="manejarClickAgregarPaso()">
     <i class="bi bi-plus"></i>
 </button>
@@ -24,14 +27,14 @@
 
                 <div class="mt-2" data-bind="{visible: modoEdicion}">
                     <button class="btn btn-primary" data-bind="{click: manejarClickSalvarPaso}">
-                        Salvar
+                        @localizer["guardar"]
                     </button>
                     <button class="btn btn-secondary" data-bind="{click: manejarClickCancelarPaso}">
-                        Cancelar
+                        @localizer["Cancelar"]
                     </button>
                     <button class="btn btn-danger" data-bind="{hidden: esNuevo,
                             click: manejarClickBorrarPaso}">
-                        Borrar
+                        @localizer["Borrar"]
                     </button>
                 </div>
             </div>

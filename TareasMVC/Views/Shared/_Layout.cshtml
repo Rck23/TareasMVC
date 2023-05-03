@@ -1,10 +1,13 @@
 ﻿@using TareasMVC.Servicios;
+@using Microsoft.AspNetCore.Mvc.Localization;
+@inject IViewLocalizer localizer
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - TareasMVC</title>
+    <title>@ViewData["Title"] - @localizer["Titulo"]</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/TareasMVC.styles.css" asp-append-version="true" />
@@ -18,20 +21,22 @@
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">TareasMVC</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">@localizer["Titulo"]</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                     <ul class="navbar-nav flex-grow-1">
-                   
-                        
+
+                        <partial name="_CambiarIdioma" />
                         <!-- SOLO SE MUESTRA CON PERFILES ADMINISTRADORES -->
                         @if (User.IsInRole(Constantes.RolAdmin))
                         {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Listado">Listado de usuarios</a>
+                                <a class="nav-link text-dark" asp-area="" asp-controller="Usuarios" asp-action="Listado">
+                                    @localizer["ListadoUsuarios"]
+                                </a>
                             </li>
                         }
 
@@ -49,28 +54,10 @@
     </div>
 
 
- @*   <footer class="border-top footer text-muted">
-        <div class="container d-flex" style="justify-content:space-between;">
-            <div class="text-center">
-                <p>&copy; 2023 - Desarrollado por  <span class="text-danger">&hearts;</span> Ulises Martínez</p>
-                
-            </div>
-
-            <div class="text-center">
-                <partial name="_CambiarIdioma" />
-            </div>
-        
-        </div>
-    </footer>*@
-
     <footer class="border-top footer text-muted">
         <div class="container  text-center ">
-            <p>&copy; 2023 - Desarrollado por  <span class="text-danger">&hearts;</span> Ulises Martínez</p>
+            <p>&copy; 2023 - @localizer["Desarrollado"] <span class="text-danger">&hearts;</span> Ulises Martínez</p>
         </div>
-        <div class="container text-center mb-1">
-            <partial name="_CambiarIdioma" />
-        </div>
-
     </footer>
    
     <partial name="_TraduccionesJS" />
