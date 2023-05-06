@@ -123,6 +123,9 @@
   <data name="btn login" xml:space="preserve">
     <value>Iniciar sesión</value>
   </data>
+  <data name="btn loginG" xml:space="preserve">
+    <value>Ir a iniciar sesión</value>
+  </data>
   <data name="btn microsoft" xml:space="preserve">
     <value>Continuar con cuenta de Microsoft</value>
   </data>

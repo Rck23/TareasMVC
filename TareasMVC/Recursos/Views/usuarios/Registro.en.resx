@@ -123,6 +123,9 @@
   <data name="btn login" xml:space="preserve">
     <value>Log in</value>
   </data>
+  <data name="btn loginG" xml:space="preserve">
+    <value>Go to sign in</value>
+  </data>
   <data name="btn microsoft" xml:space="preserve">
     <value>Continue with your Microsoft account</value>
   </data>

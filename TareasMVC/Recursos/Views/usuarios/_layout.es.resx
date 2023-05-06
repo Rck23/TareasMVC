@@ -117,10 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Desarrollado" xml:space="preserve">
+    <value>Desarrollado por</value>
+  </data>
   <data name="Display.textoInicio" xml:space="preserve">
     <value>En esta aplicación podrás administrar tus tareas</value>
   </data>
   <data name="Display.tituloInicio" xml:space="preserve">
     <value>Tareas MVC</value>
+  </data>
+  <data name="TareasMVC" xml:space="preserve">
+    <value>TareasMVC</value>
   </data>
 </root>
